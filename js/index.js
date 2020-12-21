@@ -57,6 +57,12 @@ let x = -0.043080985211751695;
 let y = 2.1572384430790104;
 let z = 5.733150140117139;
 
+if (window.matchMedia("(max-width: 700px)").matches) {
+    console.log("here");
+    y = 3.9922238750280132;
+    z = 10.60048671882729;
+}
+
 camera.position.set(x, y, z);
 controls.update();
 
@@ -100,6 +106,9 @@ function playAudio() {
         sound.setVolume( 0.5 );
         sound.play();
     });
+    let audioSource = listener.context.createBufferSource();
+    audioSource.connect(listener.context.destination);
+    audioSource.start();
 }
 
 window.addEventListener('resize', e => {
