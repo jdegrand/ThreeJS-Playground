@@ -57,7 +57,6 @@ const clock = new THREE.Clock();
 
 const animate = function () {
     requestAnimationFrame( animate );
-    console.log(camera);
 
     mixer.update( clock.getDelta() );
 
@@ -67,7 +66,6 @@ const animate = function () {
 //Load Model
 const loader = new GLTFLoader();
     loader.load('./assets/spider-man.gltf', (gltf) => {
-    console.log(gltf);
 
     scene.add(gltf.scene);
 
