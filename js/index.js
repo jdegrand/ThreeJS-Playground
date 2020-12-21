@@ -5,6 +5,8 @@ import { GLTFLoader } from 'https://unpkg.com/three@0.123.0/examples/jsm/loaders
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
+let isPlaying = false;
+
 scene.background = new THREE.CubeTextureLoader().setPath('./assets/background/').load( [ 'posx.jpg', 'negx.jpg', 'posy.jpg', 'negy.jpg', 'posz.jpg', 'negz.jpg' ] );
 
 const renderer = new THREE.WebGLRenderer();
@@ -76,6 +78,23 @@ const loader = new GLTFLoader();
     animate();
 });
 
+function playAudio() {
+    if (!isPlaying) {
+        isPlaying = true;
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
+        const sound = new THREE.Audio( listener );
+        const audioLoader = new THREE.AudioLoader();
+        
+        audioLoader.load( './assets/ymca.mp3', function( buffer ) {
+            sound.setBuffer( buffer );
+            sound.setLoop( true );
+            sound.setVolume( 0.5 );
+            sound.play();
+        });
+    }
+}
+
 window.addEventListener('resize', windowResize, false);
 
 function windowResize(){
@@ -83,3 +102,19 @@ function windowResize(){
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
+
+window.addEventListener('click', e => {
+    playAudio();
+});
+
+window.addEventListener('keypress', e => {
+    playAudio();
+});
+
+window.addEventListener('touchstart', e => {
+    playAudio();
+});
+
+window.addEventListener('dragstart', e => {
+    playAudio();
+});
