@@ -5,7 +5,8 @@ import { GLTFLoader } from 'https://unpkg.com/three@0.123.0/examples/jsm/loaders
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-let isPlaying = false;
+let userInteracted = false;
+let started = false;
 
 scene.background = new THREE.CubeTextureLoader().setPath('./assets/background/').load( [ 'posx.jpg', 'negx.jpg', 'posy.jpg', 'negy.jpg', 'posz.jpg', 'negz.jpg' ] );
 
@@ -52,14 +53,23 @@ const cube = new THREE.Mesh( geometry, groundTextures );
 scene.add( cube );
 cube.position.set(0, -0.25, 0)
 
-camera.position.set(-0.043080985211751695, 2.1572384430790104, 5.733150140117139);
+let x = -0.043080985211751695;
+let y = 2.1572384430790104;
+let z = 5.733150140117139;
+
+camera.position.set(x, y, z);
 controls.update();
+
 const clock = new THREE.Clock();
 
 
 const animate = function () {
     requestAnimationFrame( animate );
 
+    if (started && !userInteracted) {
+        camera.position.set(camera.position.x + 0.005776231125, camera.position.y, camera.position.z - 0.001690069155);
+        controls.update();
+    }
     mixer.update( clock.getDelta() );
 
     renderer.render( scene, camera );
@@ -79,42 +89,33 @@ const loader = new GLTFLoader();
 });
 
 function playAudio() {
-    if (!isPlaying) {
-        isPlaying = true;
-        const listener = new THREE.AudioListener();
-        camera.add(listener);
-        const sound = new THREE.Audio( listener );
-        const audioLoader = new THREE.AudioLoader();
-        
-        audioLoader.load( './assets/ymca.mp3', function( buffer ) {
-            sound.setBuffer( buffer );
-            sound.setLoop( true );
-            sound.setVolume( 0.5 );
-            sound.play();
-        });
-    }
+    const listener = new THREE.AudioListener();
+    camera.add(listener);
+    const sound = new THREE.Audio( listener );
+    const audioLoader = new THREE.AudioLoader();
+    
+    audioLoader.load( './assets/ymca.mp3', function( buffer ) {
+        sound.setBuffer( buffer );
+        sound.setLoop( true );
+        sound.setVolume( 0.5 );
+        sound.play();
+    });
 }
 
-window.addEventListener('resize', windowResize, false);
-
-function windowResize(){
+window.addEventListener('resize', e => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
-}
-
-window.addEventListener('click', e => {
-    playAudio();
 });
 
-window.addEventListener('keypress', e => {
+document.getElementById('enter').addEventListener('click', e => {
+    document.getElementById('overlay').style.display = "none";
     playAudio();
+    started = true;
 });
 
-window.addEventListener('touchstart', e => {
-    playAudio();
-});
-
-window.addEventListener('dragstart', e => {
-    playAudio();
+document.body.addEventListener("pointerdown", e => {
+    if (started) {
+        userInteracted = true;
+    }
 });
