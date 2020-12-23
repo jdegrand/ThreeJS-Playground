@@ -95,20 +95,7 @@ const loader = new GLTFLoader();
 });
 
 function playAudio() {
-    const listener = new THREE.AudioListener();
-    camera.add(listener);
-    const sound = new THREE.Audio( listener );
-    const audioLoader = new THREE.AudioLoader();
-    
-    audioLoader.load( './assets/ymca.mp3', function( buffer ) {
-        sound.setBuffer( buffer );
-        sound.setLoop( true );
-        sound.setVolume( 0.5 );
-        sound.play();
-    });
-    let audioSource = listener.context.createBufferSource();
-    audioSource.connect(listener.context.destination);
-    audioSource.start();
+    document.getElementById('suprise').play();
 }
 
 window.addEventListener('resize', e => {
