@@ -93,6 +93,7 @@ loader.load('./assets/spider-man.gltf', (gltf) => {
 
     animate();
 }, function onProgress(xhr) {
+    console.log("here");
     if (xhr.lengthComputable) {
         percentage = (xhr.loaded / xhr.total) * 100;
         loadingBar.style.width = percentage + '%';
