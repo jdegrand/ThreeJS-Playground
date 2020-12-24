@@ -79,25 +79,27 @@ const animate = function () {
     renderer.render( scene, camera );
 };
 
+let manager = new THREE.LoadingManager();
+manager.onLoad = () => {
+    percentage = 100;
+    document.getElementById('loader').style.width = percentage + '%';
+};
+
+manager.onError = (err) => {
+    console.log( 'ERROR ON:', err);
+};
+
 //Load Model
 var percentage = 0;
-const loadingBar = document.getElementById('loader');
-const loader = new GLTFLoader();
+const loader = new GLTFLoader(manager);
 loader.load('./assets/spider-man.gltf', (gltf) => {
     scene.add(gltf.scene);
 
     mixer = new THREE.AnimationMixer(gltf.scene);
 
     mixer.clipAction(gltf.animations[0]).play();
+    
     animate();
-}, function onProgress(xhr) {
-    console.log("xhr", xhr);
-    if (xhr.lengthComputable) {
-        percentage = (xhr.loaded / xhr.total) * 100;
-        loadingBar.style.width = percentage + '%';
-    }
-}, function onError(err) {
-    console.log("ERROR:", err)
 });
 
 function playAudio() {
