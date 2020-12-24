@@ -3,10 +3,11 @@ import { OrbitControls } from 'https://unpkg.com/three@0.123.0/examples/jsm/cont
 import { GLTFLoader } from 'https://unpkg.com/three@0.123.0/examples/jsm/loaders/GLTFLoader.js'
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
 
 let userInteracted = false;
 let started = false;
+let enterText = 'click me!';
 
 scene.background = new THREE.CubeTextureLoader().setPath('./assets/background/').load( [ 'posx.jpg', 'negx.jpg', 'posy.jpg', 'negy.jpg', 'posz.jpg', 'negz.jpg' ] );
 
@@ -35,7 +36,6 @@ texture.repeat.set( 1, 0.15 )
 
 const sideTexture = new THREE.MeshBasicMaterial( { map: texture });
 
-
 var groundTextures = 
     [
         sideTexture,
@@ -58,7 +58,6 @@ let y = 2.1572384430790104;
 let z = 5.733150140117139;
 
 if (window.matchMedia("(max-width: 700px)").matches) {
-    console.log("here");
     y = 3.9922238750280132;
     z = 10.60048671882729;
 }
@@ -82,9 +81,10 @@ const animate = function () {
 };
 
 //Load Model
+var percentage = 0;
+const loadingBar = document.getElementById('loader');
 const loader = new GLTFLoader();
-    loader.load('./assets/spider-man.gltf', (gltf) => {
-
+loader.load('./assets/spider-man.gltf', (gltf) => {
     scene.add(gltf.scene);
 
     mixer = new THREE.AnimationMixer( gltf.scene );
@@ -92,6 +92,11 @@ const loader = new GLTFLoader();
     mixer.clipAction( gltf.animations[ 0 ] ).play();
 
     animate();
+}, function onProgress(xhr) {
+    if (xhr.lengthComputable) {
+        percentage = (xhr.loaded / xhr.total) * 100;
+        loadingBar.style.width = percentage + '%';
+    }
 });
 
 function playAudio() {
@@ -105,9 +110,11 @@ window.addEventListener('resize', e => {
 });
 
 document.getElementById('enter').addEventListener('click', e => {
-    document.getElementById('overlay').style.display = "none";
-    playAudio();
-    started = true;
+    if (document.getElementById('enter').innerText == enterText) {
+        document.getElementById('overlay').style.display = "none";
+        playAudio();
+        started = true;
+    }
 });
 
 document.body.addEventListener("pointerdown", e => {
@@ -115,3 +122,14 @@ document.body.addEventListener("pointerdown", e => {
         userInteracted = true;
     }
 });
+
+function checkForLoaded() {
+    if (percentage == 100) {
+        document.getElementById('enter').innerText = enterText;
+        document.getElementById('enter').style.backgroundColor = "#F44336";
+        document.getElementById('loader').style.transition = "none";
+        document.getElementById('loading-bar').style.visibility = "hidden";
+    }
+}
+
+document.getElementById("loader").addEventListener("transitionend", checkForLoaded);
