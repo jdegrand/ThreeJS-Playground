@@ -67,7 +67,6 @@ controls.update();
 
 const clock = new THREE.Clock();
 
-
 const animate = function () {
     requestAnimationFrame( animate );
 
@@ -87,17 +86,20 @@ const loader = new GLTFLoader();
 loader.load('./assets/spider-man.gltf', (gltf) => {
     scene.add(gltf.scene);
 
-    mixer = new THREE.AnimationMixer( gltf.scene );
+    mixer = new THREE.AnimationMixer(gltf.scene);
 
-    mixer.clipAction( gltf.animations[ 0 ] ).play();
-
+    mixer.clipAction(gltf.animations[0]).play();
+    console.log("here");
     animate();
+    console.log("2");
 }, function onProgress(xhr) {
     console.log("here");
     if (xhr.lengthComputable) {
         percentage = (xhr.loaded / xhr.total) * 100;
         loadingBar.style.width = percentage + '%';
     }
+}, function onError(err) {
+    console.log("here be error", err)
 });
 
 function playAudio() {
@@ -107,7 +109,7 @@ function playAudio() {
 window.addEventListener('resize', e => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
 document.getElementById('enter').addEventListener('click', e => {
