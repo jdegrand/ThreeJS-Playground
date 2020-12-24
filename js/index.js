@@ -89,17 +89,15 @@ loader.load('./assets/spider-man.gltf', (gltf) => {
     mixer = new THREE.AnimationMixer(gltf.scene);
 
     mixer.clipAction(gltf.animations[0]).play();
-    console.log("here");
     animate();
-    console.log("2");
 }, function onProgress(xhr) {
-    console.log("here");
+    console.log("xhr", xhr);
     if (xhr.lengthComputable) {
         percentage = (xhr.loaded / xhr.total) * 100;
         loadingBar.style.width = percentage + '%';
     }
 }, function onError(err) {
-    console.log("here be error", err)
+    console.log("ERROR:", err)
 });
 
 function playAudio() {
